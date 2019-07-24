@@ -1,25 +1,26 @@
 const Joi = require('joi');
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
+const db = require('../config/db');
 
-const EventSchema  = new mongoose.Schema({
+const Event = db.define('event', {
     title: {
-        type: String,
-        required: true,
-        minlength: 5
+        type: Sequelize.STRING,
+        allowNull: false,
+        len: [5,100]
     },
     start_date: {
-        type: Date
+        type: Sequelize.DATE
     },
     end_date: {
-        type: Date
+        type: Sequelize.DATE
     },
     thumbnail: {
-        type: String,
-        required: true
+        type: Sequelize.STRING,
+        allowNull: false
     }
+}, {
+    timestamps: false
 });
-
-const Event = mongoose.model('Event', EventSchema);
 
 function validate(event){
     const schema = {

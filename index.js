@@ -1,15 +1,12 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const events = require('./routes/events');
+const db = require('./config/db');
 
 const app = express();
 
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-
-mongoose.connect('mongodb://localhost/events_test')
-    .then(() => console.log('Connected to MongoDB...'))
-    .catch(err => console.error('Could not connect to MongoDB...'));
+db.authenticate()
+    .then(() => console.log('Database connected...'))
+    .catch((err) => console.log('Error: ' + err));
 
 app.use(express.json());
 app.use('/events', events);

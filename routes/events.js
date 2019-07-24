@@ -1,58 +1,71 @@
-const {Event, validate} = require('../models/event');
+const db = require('../config/db');
+const {Event, validate} = require('../models/Event');
 const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    const events = await Event.find().sort('start_date');
+    const events = await Event.findAll();
     res.send(events);
 });
 
 router.get('/:id', async (req, res) => {
-    const event = await Event.findById(req.params.id);
+    const event = await Event.findAll({
+        where: {
+            id: req.params.id
+        }
+    });
 
     if(!event) return res.status(404).send('The event with the given ID was not found');
 
     res.send(event);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
-    let event = new Event({
-        title: req.body.title,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date,
-        thumbnail: req.body.thumbnail
-    });
+    let { title, start_date, end_date, thumbnail } = req.body;
 
-    event = await event.save();
-
-    res.send(event);
+    Event.create({
+        title,
+        start_date,
+        end_date,
+        thumbnail
+    })
+    
+    .then(() => res.status(200).send('Event successfully added...'))
+    .catch((err) => res.status(404).send('Error: ' + err));
+    
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', (req, res) => {
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
-    const event = await Event.findByIdAndUpdate(req.params.id, {
-        title: req.body.title,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date,
-        thumbnail: req.body.thumbnail
-    }, { new: true });
+    let { title, start_date, end_date, thumbnail } = req.body;
 
-    if(!event) return res.status(404).send('The event with the given id was not found');
-
-    res.send(event);
+    Event.update({
+        title,
+        start_date,
+        end_date,
+        thumbnail
+    },{
+        where: {
+            id: req.params.id
+        }
+    })
+    .then(() => res.status(200).send('Event successfully updated...'))
+    .catch(() => res.status(404).send('The event with the given id was not found'));
 });
 
-router.delete('/:id', async (req, res) => {
-    const event = await Event.findByIdAndRemove(req.params.id);
-
-    if(!event) return res.status(404).send('The Event with the given ID was not found');
-
-    res.send(event);
+router.delete('/:id', (req, res) => {
+    Event.destroy({
+        where: {
+            id: req.params.id
+        }
+    })
+        .then(() => res.status(200).send('Deleted successfully'))
+        .catch(() => res.status(404).send('The Event with the given ID was not found'));
 });
 
 module.exports = router;
