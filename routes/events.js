@@ -57,23 +57,3 @@ router.delete('/:id', async (req, res) => {
 
 module.exports = router;
 
-// POST
-//return 400 bad request if title is not included
-//return 200 if valid request
-
-//PUT
-//return 400 bad request if title is not included
-//return 404 if the event with the given ID was not found
-//return 200 if valid request
-
-
-//GET:id
-//return 404 if the event with the given ID was not found
-//return 200 if valid request
-
-
-//DELETE
-//return 404 if the event with the given ID was not found
-//return 200 if valid request
-
-

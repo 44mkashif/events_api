@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const EventSchema  = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        minlength: 5
     },
     start_date: {
         type: Date
@@ -13,7 +14,8 @@ const EventSchema  = new mongoose.Schema({
         type: Date
     },
     thumbnail: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
@@ -21,8 +23,10 @@ const Event = mongoose.model('Event', EventSchema);
 
 function validate(event){
     const schema = {
-        title: Joi.string().required(),
-        thumbnail: Joi.string()
+        title: Joi.string().min(5).required(),
+        thumbnail: Joi.string().required(),
+        start_date: Joi.date(),
+        end_date: Joi.date()
     }
 
     return Joi.validate(event, schema);
